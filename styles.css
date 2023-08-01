@@ -1,0 +1,58 @@
+*{
+    margin:0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.resources {
+    padding: 10px;
+    display: flex;
+    background-color: #2ca46c;
+}
+.resources div {
+    margin: 10px;
+}
+#gold {
+    color: yellow;
+}
+#wood {
+    color: #854314;
+}
+#stone {
+    color: #3f3e3e;
+}
+#population {
+    color: #0606ce;
+}
+.f1 {
+    flex:1;
+}
+.buildingsToBuy {
+    background-color: #b1f39a;
+    padding: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.buildingsToBuy >div {
+    width: 250px;
+    background-color: #d9fccf;
+    border-radius: 50px;
+    margin: 10px;
+    padding: 20px;
+}
+img {
+    width:100%;
+}
+.boughtBuildings {
+    padding: 10px;
+    background-color: #bbefbc;
+    flex-wrap: wrap;
+    display: flex;
+}
+.boughtBuildings > div{
+    width: 250px;
+    margin: 10px;
+}
+p {
+    margin: 0;
+}
