@@ -15,7 +15,7 @@ const stoneResource = document.querySelector('#stone') as HTMLElement;
 const foodResource = document.querySelector('#food') as HTMLElement;
 const populationResource = document.querySelector('#population') as HTMLElement;
 const buildingsToBuy = document.querySelector('.buildingsToBuy') as HTMLElement;
-const boughtBuildings = document.querySelector('.boughtBuildings') as HTMLElement;
+const boughtBuildingsCont = document.querySelector('.boughtBuildings') as HTMLElement;
 
 type Count = {
     gold: number,
@@ -67,14 +67,6 @@ const resources: Count = {
     stone: 20,
     food: 20,
     population: 10
-}
-
-const resourcesToAdd: Count = {
-    gold: 0,
-    wood: 0,
-    stone: 0,
-    food: 0,
-    population: 0
 }
 const homes: Building[] = [
     {
@@ -381,46 +373,57 @@ homes.forEach((home: Building) => {
     homeDiv.append(homePhoto, costAndGainDiv, hr, neededToBuildDiv);
     buildingsToBuy.append(homeDiv);
 })
+
+
 const homesDivs = document.querySelectorAll('.buildingsToBuy >div') as NodeListOf<HTMLElement>;
-let boughtBuildings_divs : any = null;
+let boughtBuildings :Building[] | any = [];
+
 homesDivs.forEach((homeDiv: HTMLElement) => {
     homeDiv.onclick = () => {
         let clickedBuilding = homeDiv.className;
+        let boughtTentCount:number = 0;
+        let boughtHutCount:number = 0;
+        let boughtHouseCount:number = 0;
         if (clickedBuilding) {
             let homeToBuy: Building | any = homes.find((home: Building) => home.type === clickedBuilding);
             if (resources.gold >= homeToBuy.cost[0].amount && resources.stone >= homeToBuy.cost[1].amount && resources.wood >= homeToBuy.cost[2].amount && resources.food >= homeToBuy.cost[3].amount && resources.population >= homeToBuy.cost[4].amount) {
-                resources.gold -= homeToBuy.cost[0].amount;
-                resources.stone -= homeToBuy.cost[1].amount;
-                resources.wood -= homeToBuy.cost[2].amount;
-                resources.food -= homeToBuy.cost[3].amount;
-                resources.population -= homeToBuy.cost[4].amount;
-                resourcesToAdd.population += homeToBuy.givesPopulation;
+               homeToBuy.neededToBuild.forEach((needsToBeBought:typeAmount) => {
+                   boughtTentCount = boughtBuildings.filter((boughtBuilding: Building) => boughtBuilding.type === 'tent').length;
+                   boughtHutCount = boughtBuildings.filter((boughtBuilding: Building) => boughtBuilding.type === 'hut').length;
+                   boughtHouseCount = boughtBuildings.filter((boughtBuilding: Building) => boughtBuilding.type === 'simple house').length;
+               })
+                if(boughtTentCount >= homeToBuy.neededToBuild[0].amount && boughtHutCount >= homeToBuy.neededToBuild[1].amount && boughtHouseCount >= homeToBuy.neededToBuild[2].amount){
+                    resources.gold -= homeToBuy.cost[0].amount;
+                    resources.stone -= homeToBuy.cost[1].amount;
+                    resources.wood -= homeToBuy.cost[2].amount;
+                    resources.food -= homeToBuy.cost[3].amount;
+                    resources.population -= homeToBuy.cost[4].amount;
 
-                const boughtHouse = document.createElement('div');
-                const boughtHouseImg = document.createElement('img');
-                boughtHouseImg.src = homeToBuy.photo;
-                boughtHouse.append(boughtHouseImg);
-                boughtBuildings.append(boughtHouse);
-                if(homeToBuy){
-                    setInterval(addResources, 1000, homeToBuy)
+                    resources.population += homeToBuy.givesPopulation;
+
+                    const boughtHouse = document.createElement('div');
+                    const boughtHouseImg = document.createElement('img');
+                    boughtHouseImg.src = homeToBuy.photo;
+                    boughtHouse.append(boughtHouseImg);
+                    boughtBuildingsCont.append(boughtHouse);
+
+                    boughtBuildings.push(homeToBuy);
+                    displayResources();
+                    console.log('you have needed houses')
+                } else {
+                    console.log('you do not have needed houses')
                 }
-                displayResources();
+
                 console.log('enough resources')
             } else {
                 console.log('not enough resources')
             }
-            console.log(homeToBuy);
         }
 
     }
 })
 
 function displayResources() {
-    resources.gold += resourcesToAdd.gold;
-    resources.wood += resourcesToAdd.wood;
-    resources.stone += resourcesToAdd.stone;
-    resources.food += resourcesToAdd.food;
-    resources.population += resourcesToAdd.population;
     goldResource.textContent = 'GOLD: ' + resources.gold;
     woodResource.textContent = 'WOOD: ' + resources.wood;
     stoneResource.textContent = 'STONE: ' + resources.stone;
@@ -428,14 +431,17 @@ function displayResources() {
     populationResource.textContent = 'POPULATION: ' + resources.population;
 }
 
-function addResources(homeToBuy: Building | any) {
-    resourcesToAdd.gold += homeToBuy.givesPerSec[0].amount;
-    resourcesToAdd.stone += homeToBuy.givesPerSec[1].amount;
-    resourcesToAdd.wood += homeToBuy.givesPerSec[2].amount;
-    resourcesToAdd.food += homeToBuy.givesPerSec[3].amount;
+function addResources() {
+    boughtBuildings.forEach((boughtBuilding:Building) => {
+        resources.gold += boughtBuilding.givesPerSec[0].amount;
+        resources.stone += boughtBuilding.givesPerSec[1].amount;
+        resources.wood += boughtBuilding.givesPerSec[2].amount;
+        resources.food += boughtBuilding.givesPerSec[3].amount;
+        resources.food -=boughtBuilding.foodCostPerSec;
+    })
     displayResources();
 }
 
 displayResources();
-// setInterval(addResources, 1000);
+setInterval(addResources, 1000);
 
