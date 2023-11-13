@@ -1,14 +1,3 @@
-// Task: mCreat a game where you can buy deferent buildings for diff rescourses.
-//Pseodo code:
-// 1. Create html/css
-// 2. Display in html Array recourses
-// 3. Display in html houses from array homes =
-// 4. create div for "all bought buildings to appear"
-// 5. js logics: check recourses on home click to check price and verify with your rescourses
-// 6. If yes  - appears on the right, substract from recourses the price
-// 7. each home (bought) - generates some income (recourses), have one set timeout function to generate.
-//8. Have array for recourses (gained) each second.
-
 const goldResource = document.querySelector('#gold') as HTMLElement;
 const woodResource = document.querySelector('#wood') as HTMLElement;
 const stoneResource = document.querySelector('#stone') as HTMLElement;
@@ -38,29 +27,6 @@ type typeAmount = {
     type: string,
     amount: number
 }
-// const resources:typeAmount[] = [
-//     {
-//         type: 'GOLD',
-//         amount: 100
-//     },
-//     {
-//         type: 'WOOD',
-//         amount: 20
-//     },
-//     {
-//         type: 'STONE',
-//         amount: 20
-//     },
-//     {
-//         type: 'FOOD',
-//         amount: 20
-//     },
-//     {
-//         type: 'POPULATION',
-//         amount: 10
-//     },
-//
-// ]
 const resources: Count = {
     gold: 100,
     wood: 20,
@@ -230,7 +196,7 @@ const homes: Building[] = [
             },
             {
                 type: 'food',
-                amount: 3
+                amount: 0
             }
         ],
         neededToBuild: [
@@ -409,14 +375,15 @@ homesDivs.forEach((homeDiv: HTMLElement) => {
 
                     boughtBuildings.push(homeToBuy);
                     displayResources();
-                    console.log('you have needed houses')
+                    if(homeToBuy.type === 'city hall'){
+                        alert('you won the game');
+                        newGame();
+                    }
                 } else {
-                    console.log('you do not have needed houses')
+                    alert('you do not have needed houses')
                 }
-
-                console.log('enough resources')
             } else {
-                console.log('not enough resources')
+                alert('not enough resources')
             }
         }
 
@@ -429,6 +396,10 @@ function displayResources() {
     stoneResource.textContent = 'STONE: ' + resources.stone;
     foodResource.textContent = 'FOOD: ' + resources.food;
     populationResource.textContent = 'POPULATION: ' + resources.population;
+    if (resources.food < 0) {
+        alert('game over');
+       newGame();
+    }
 }
 
 function addResources() {
@@ -437,11 +408,20 @@ function addResources() {
         resources.stone += boughtBuilding.givesPerSec[1].amount;
         resources.wood += boughtBuilding.givesPerSec[2].amount;
         resources.food += boughtBuilding.givesPerSec[3].amount;
-        resources.food -=boughtBuilding.foodCostPerSec;
+        resources.food -= boughtBuilding.foodCostPerSec;
     })
     displayResources();
 }
-
+function newGame() {
+    resources.gold = 100;
+    resources.stone = 20;
+    resources.wood = 20;
+    resources.food =20;
+    resources.population = 10;
+    displayResources();
+    boughtBuildings = [];
+    boughtBuildingsCont.textContent = '';
+}
 displayResources();
 setInterval(addResources, 1000);
 

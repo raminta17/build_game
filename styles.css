@@ -48,9 +48,11 @@ img {
     background-color: #bbefbc;
     flex-wrap: wrap;
     display: flex;
+    align-content: start;
 }
 .boughtBuildings > div{
-    width: 250px;
+    width: 100px;
+    height: 100px;
     margin: 10px;
 }
 p {

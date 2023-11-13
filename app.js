@@ -208,7 +208,7 @@ const homes = [
             },
             {
                 type: 'food',
-                amount: 3
+                amount: 0
             }
         ],
         neededToBuild: [
@@ -378,15 +378,17 @@ homesDivs.forEach((homeDiv) => {
                     boughtBuildingsCont.append(boughtHouse);
                     boughtBuildings.push(homeToBuy);
                     displayResources();
-                    console.log('you have needed houses');
+                    if (homeToBuy.type === 'city hall') {
+                        alert('you won the game');
+                        newGame();
+                    }
                 }
                 else {
-                    console.log('you do not have needed houses');
+                    alert('you do not have needed houses');
                 }
-                console.log('enough resources');
             }
             else {
-                console.log('not enough resources');
+                alert('not enough resources');
             }
         }
     };
@@ -397,6 +399,10 @@ function displayResources() {
     stoneResource.textContent = 'STONE: ' + resources.stone;
     foodResource.textContent = 'FOOD: ' + resources.food;
     populationResource.textContent = 'POPULATION: ' + resources.population;
+    if (resources.food < 0) {
+        alert('game over');
+        newGame();
+    }
 }
 function addResources() {
     boughtBuildings.forEach((boughtBuilding) => {
@@ -407,6 +413,16 @@ function addResources() {
         resources.food -= boughtBuilding.foodCostPerSec;
     });
     displayResources();
+}
+function newGame() {
+    resources.gold = 100;
+    resources.stone = 20;
+    resources.wood = 20;
+    resources.food = 20;
+    resources.food = 10;
+    displayResources();
+    boughtBuildings = [];
+    boughtBuildingsCont.textContent = '';
 }
 displayResources();
 setInterval(addResources, 1000);
